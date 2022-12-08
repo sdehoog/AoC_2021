@@ -58,7 +58,7 @@ class Bingo_Board:
 ##
 ##print(Board_1.bingo)
 
-fin = open("""C:\\Users\\steve\\OneDrive\\Documents\\Advent of Code\\2021\\Day 4\\input.txt""")
+fin = open("""C:\\Users\\steve\\OneDrive\\Documents\\Advent of Code\\2021\\Day 04\\test_input.txt""")
 
 numbers = []
 numbers = fin.readline().strip().split(",")
@@ -86,26 +86,30 @@ fin.close()
 for i in range(len(numbers)):
 ##    print("Number is " + str(numbers[i]))
     for j in range(len(Boards)):
-        if not Boards[j].bingo:
-            
-            Boards[j].check(int(numbers[i]))
-##            Boards[j].print()
-##            print()
-            if Boards[j].bingo == True:
-                Boards[j].print()
-                last_board = j
-                last_number = int(numbers[i])
+        
+        Boards[j].check(int(numbers[i]))
+##        Boards[j].print()
+##        print()
+        if Boards[j].bingo == True:
+            Boards[j].print()
+            break
+
+    else:
+        continue
+    break
 
 board_sum = 0
 
+winning_board = j
+final_number = int(numbers[i])
+
 for i in range(5):
     for j in range(5):
-        if not Boards[last_board].marked[i][j]:
-            board_sum += Boards[last_board].board[i][j]
+        if not Boards[winning_board].marked[i][j]:
+            board_sum += Boards[winning_board].board[i][j]
             
 
-print(last_board)    
-print(last_number)
+print(final_number)    
 print(board_sum)
-print(last_number * board_sum)
+print(final_number * board_sum)
 
