@@ -1,5 +1,6 @@
 from itertools import permutations
 
+
 class SnailNumber:
     def __init__(self, snail_number, parent=None):
         self.parent = parent
@@ -176,7 +177,6 @@ def snail_homework(filepath, any_two=False):
             mags.append(sn.magnitude())
 
         return max(mags)
-
 
 
 def main():
