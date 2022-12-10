@@ -1,3 +1,5 @@
+from itertools import permutations
+
 class SnailNumber:
     def __init__(self, snail_number, parent=None):
         self.parent = parent
@@ -21,7 +23,7 @@ class SnailNumber:
 
     def reduce(self):
         while self.explode() or self.split():
-            print(self)
+            # print(self)
             pass
         # while self.height() > 4 or self.double_digit():
         #     if self.height() > 4:
@@ -83,17 +85,21 @@ class SnailNumber:
                 self.left.to_right(value, 'down')
 
     def split(self):
-        # need debugging
         if isinstance(self.left, int) and self.left > 9:
             self.left = SnailNumber([self.left // 2, self.left - self.left // 2], self)
             return True
-        elif isinstance(self.left, SnailNumber):
+        elif isinstance(self.left, int) and isinstance(self.right, int) and self.right > 9:
+            self.right = SnailNumber([self.right // 2, self.right - self.right // 2], self)
+            return True
+        elif isinstance(self.left, SnailNumber) and self.left.double_digit():
             return self.left.split()
-        elif isinstance(self.right, int) and self.right > 9:
+        elif isinstance(self.left, SnailNumber) and not(self.left.double_digit()) and isinstance(self.right, int) and self.right > 9:
             self.right = SnailNumber([self.right // 2, self.right - self.right // 2], self)
             return True
         elif isinstance(self.left, SnailNumber) and isinstance(self.right, SnailNumber):
             return self.left.split() or self.right.split()
+        elif isinstance(self.left, SnailNumber):
+            return self.left.split()
         elif isinstance(self.right, SnailNumber):
             return self.right.split()
         return False
@@ -150,18 +156,27 @@ def reduce_sn(sn_number: SnailNumber):
         continue
 
 
-def snail_homework(filepath):
+def snail_homework(filepath, any_two=False):
     with open(filepath) as fin:
         snail_numbers = [eval(line) for line in fin.readlines()]
 
-    first_sn = SnailNumber(snail_numbers[0])
-    for sn in snail_numbers[1:]:
-        next_sn = SnailNumber(sn)
-        first_sn += next_sn
-        first_sn.reduce()
-        print(first_sn)
-    print(first_sn)
-    return first_sn.magnitude()
+    if not any_two:
+        first_sn = SnailNumber(snail_numbers[0])
+        for sn in snail_numbers[1:]:
+            next_sn = SnailNumber(sn)
+            first_sn += next_sn
+            first_sn.reduce()
+
+        return first_sn.magnitude()
+    else:
+        mags = []
+        for a, b in permutations(snail_numbers, 2):
+            sn = SnailNumber(a) + SnailNumber(b)
+            sn.reduce()
+            mags.append(sn.magnitude())
+
+        return max(mags)
+
 
 
 def main():
@@ -220,17 +235,22 @@ def main():
     #     first_sn.reduce()
     # print(first_sn)
 
-    sn10 = SnailNumber([[[[7,0],[7,7]],[[7,7],[7,8]]],[[[7,7],[8,8]],[[7,7],[8,7]]]])
-    sn11 = SnailNumber([7,[5,[[3,8],[1,4]]]])
-    sn12 = sn10 + sn11
-    sn12.reduce()
-    sn13 = SnailNumber([[[[7,7],[7,8]],[[9,5],[8,7]]],[[[6,8],[0,8]],[[9,9],[9,0]]]])
-    print(sn12)
-    print(sn13)
-    assert str(sn12) == str(sn13)
+    # sn10 = SnailNumber([[[[7,0],[7,7]],[[7,7],[7,8]]],[[[7,7],[8,8]],[[7,7],[8,7]]]])
+    # sn11 = SnailNumber([7,[5,[[3,8],[1,4]]]])
+    # sn12 = sn10 + sn11
+    # sn12.reduce()
+    # sn13 = SnailNumber([[[[7,7],[7,8]],[[9,5],[8,7]]],[[[6,8],[0,8]],[[9,9],[9,0]]]])
+    # print(sn12)
+    # print(sn13)
+    # assert str(sn12) == str(sn13)
     # print(snail_homework('test02'))
     # print(snail_homework('test01'))
-    # print(snail_homework('input18'))
+
+    assert snail_homework('test01') == 4140
+    print(snail_homework('input18'))
+
+    assert snail_homework('test01', True) == 3993
+    print(snail_homework('input18', True))
 
 
 if __name__ == '__main__':
